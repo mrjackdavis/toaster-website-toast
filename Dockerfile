@@ -7,14 +7,6 @@ RUN pip install selenium
 RUN pip install nap
 RUN pip install boto
 
-# ADD ./utils/* /utils/
-
-# RUN /utils/install_phantomjs.sh
-
-# RUN apt-get update && apt-get install -y g++ flex bison gperf ruby perl libsqlite3-dev libfontconfig1-dev libicu-dev libfreetype6 libssl-dev libpng-dev libjpeg-dev make git libqt5webkit5-dev 
-
-# RUN git clone git://github.com/ariya/phantomjs.git && cd phantomjs && git checkout 2.0 && ./build.sh --confirm
-
 ENV PHANTOMJS_VERSION 1.9.7
 
 RUN \
@@ -30,6 +22,6 @@ ADD ./src/* /app/
 
 ENTRYPOINT ["python"]
 
-CMD ["/app/main.py","-u http://www.google.com"]
+CMD ["/app/main.py","-u http://www.trioxis.com"]
 
 EXPOSE 5000
