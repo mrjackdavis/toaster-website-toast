@@ -2,11 +2,6 @@ FROM python:3.4.3
 
 RUN apt-get -y update
 
-RUN pip install Pillow
-RUN pip install selenium
-RUN pip install nap
-RUN pip install boto
-
 ENV PHANTOMJS_VERSION 1.9.7
 
 RUN \
@@ -17,6 +12,13 @@ RUN \
   rm -f /tmp/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 && \
   mv /tmp/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/ /srv/var/phantomjs && \
   ln -s /srv/var/phantomjs/bin/phantomjs /usr/bin/phantomjs
+
+RUN pip install Pillow
+RUN pip install selenium
+RUN pip install nap
+RUN pip install boto
+RUN apt-get install -y python3-setuptools
+RUN pip install Toast_Python_SDK==0.1.3
 
 ADD ./src/* /app/
 
