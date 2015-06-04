@@ -26,5 +26,20 @@ def toast(uri):
     composite_image = PIL.Image.composite(toast_image, black_image,
         capture_mask)
 
-    composite_image.save("/app/composite.png")
+    renderedImagePath = "/app/render.png"
+    thumbnailPath = "/app/thumbnail.png"
+
+    composite_image.save(renderedImagePath)
+
+    size = 500, 500
+
+    #open previously generated file
+    compImg = PIL.Image.open(renderedImagePath)
+
+    compImg.thumbnail(size, PIL.Image.ANTIALIAS)
+
+    compImg.save(thumbnailPath, "JPEG", quality=60)
+
     logging.info("Done toasting %s",uri)
+
+    return renderedImagePath, thumbnailPath

@@ -1,51 +1,62 @@
 #!/usr/bin/env python
 from __future__ import print_function
  
-import argparse
 import os
 import time
 import logging
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+from boto.s3.connection import Location
+
 from ToastItApi import ToastItApi
 from toaster import toast
 
 logging.basicConfig(level=logging.INFO)
+generatorName = "Real Toast"
+apiLocation = os.environ['API_PORT'].replace('tcp://','http://') + '/v0-2/'
+
+s3Connection = S3Connection(os.environ['S3_ACCESS_KEY'],os.environ['S3_SECRET_KEY'], host="s3-ap-southeast-2.amazonaws.com",
+)
+
+def uploadItemToS3(pathToImg,itemID):
+    logging.info("Uploading %s (%s) to S3",itemID,pathToImg)
+
+    bucketName = 'toast-artefacts'
+
+    logging.info(s3Connection)
+
+    bucket = s3Connection.get_bucket(bucketName)
+    k = Key(bucket)
+    k.key = 'generators/%s/%s.png' % (generatorName,itemID)
+    k.set_contents_from_filename(pathToImg)
+    k.set_canned_acl('public-read')
+
+    return "https://s3-ap-southeast-2.amazonaws.com/%s/%s" % (bucketName,k.key)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--uri", help="URI to fetch", required=True)
-    args = parser.parse_args()
-    apiLocation = os.environ['API_PORT'].replace('tcp://','http://') + '/v0-2/'
     toastItApi = ToastItApi(apiLocation);
 
     while True:
         logging.info('Checking for new requests')
-        items = toastItApi.GetAllNew()
+        items = toastItApi.GetAllNewForGenerator(generatorName)
 
         logging.info('Found %s new requests',len(items))
 
         for item in items:
             try:
-                # toastItApi.StartProcessing(item)
-                # fileLocation = generator.new(item)
-                # logging.info("Finished generating %s",item.id)
+                toastItApi.StartProcessing(item)
+                fullImage, thumbnail = toast(item.resourceURL)
+                logging.info("Finished generating %s",item.id)
 
-                # if not fileLocation:
-                #     raise Exception("File location was null")
+                item.resultURL=uploadItemToS3(fullImage,item.id)
+                item.thumbnailURL=uploadItemToS3(thumbnail,"%s-thumbnail"%item.id)
 
-                # resultFullSizeFilePath = compress(fileLocation,80)
-                # resultThumbnailFilePath = compressAndScale(fileLocation,50,500)
+                toastItApi.CompleteProcessing(item)
 
-                # item.resultURL=uploadItemToS3(resultFullSizeFilePath,item.id)
-                # item.thumbnailURL=uploadItemToS3(resultThumbnailFilePath,"%s-thumbnail"%item.id)
+                logging.info('Generated result for %s. Found at %s',item.id,item.resultURL)
 
-                # toastItApi.CompleteProcessing(item)
-
-                # logging.info('Generated result for %s. Found at %s',item.id,item.resultURL)
-
-                toast(item.resourceURL)
-                # toast(args.uri)
             except Exception as e:
-                logging.error(e)
+                logging.exception(e)
                 toastItApi.FailProcessing(item)
 
         logging.info("Sleeping for 10...")

@@ -18,7 +18,7 @@ RUN pip install selenium
 RUN pip install nap
 RUN pip install boto
 RUN apt-get install -y python3-setuptools
-RUN pip install Toast_Python_SDK==0.1.3
+RUN pip install Toast_Python_SDK==0.1.4
 
 ADD ./src/* /app/
 
