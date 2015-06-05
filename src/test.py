@@ -12,6 +12,6 @@ logging.basicConfig(level=logging.INFO)
 if __name__ == "__main__":
     logging.info('Test toasting')
 
-    fullImage, thumbnail = toast("http://www.trioxis.com")
+    fullImage, thumbnail = toast("http://www.apple.com")
 
     logging.info('Done')

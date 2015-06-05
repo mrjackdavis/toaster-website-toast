@@ -13,9 +13,8 @@ def fetch_screen_capture(uri, size):
 def toast(uri):
     logging.info("Toasting %s",uri)
 
-    toast_image = PIL.Image.open("/app/toast.jpg")
-    black_image = PIL.Image.new(mode=toast_image.mode, size=toast_image.size,
-        color=0)
+    toast_image = PIL.Image.open("/app/toast-01.png")
+    black_image = PIL.Image.open("/app/toast-02.png")
 
     capture_cropbox = (0, 0) + toast_image.size
     capture = fetch_screen_capture(uri, toast_image.size)
