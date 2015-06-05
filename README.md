@@ -2,6 +2,8 @@
 
 Turning websites into toast. Because art.
 
+Special thanks to Matt [@fauxfiction](https://github.com/fauxfiction) for the idea and prototype.
+
 ## Using this toaster
 
 Build the docker image
