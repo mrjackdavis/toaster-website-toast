@@ -37,7 +37,7 @@ def toast(uri):
 
     compImg.thumbnail(size, PIL.Image.ANTIALIAS)
 
-    compImg.save(thumbnailPath, "JPEG", quality=60)
+    compImg.save(thumbnailPath, "PNG", quality=60)
 
     logging.info("Done toasting %s",uri)
 
